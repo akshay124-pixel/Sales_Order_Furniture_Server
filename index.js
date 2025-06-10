@@ -16,7 +16,7 @@ Controller.initSocket(server);
 
 // CORS configuration
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://sales-order-furniture.vercel.app",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
   optionsSuccessStatus: 200,
