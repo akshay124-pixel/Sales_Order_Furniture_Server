@@ -478,6 +478,7 @@ const editEntry = async (req, res) => {
       "creditDays",
       "actualFreight",
       "stockStatus",
+      "remarksBydispatch",
     ];
 
     // Create update object with only provided fields

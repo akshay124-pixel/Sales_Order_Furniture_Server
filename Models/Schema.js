@@ -131,6 +131,7 @@ const orderSchema = new mongoose.Schema(
     billNumber: { type: String, trim: true },
     piNumber: { type: String, trim: true },
     remarksByBilling: { type: String, trim: true },
+    remarksBydispatch: { type: String, trim: true },
     verificationRemarks: { type: String, trim: true },
     billStatus: {
       type: String,
