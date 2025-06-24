@@ -109,7 +109,14 @@ const orderSchema = new mongoose.Schema(
     report: { type: String, trim: true, default: "" },
     company: {
       type: String,
-      enum: ["Promark", "Foxmate", "Promine", "Primus", ""],
+      enum: [
+        "Promark",
+        "Foxmate",
+        "Promine",
+        "Primus",
+        "Lead Systems Incorporatio",
+        "",
+      ],
       default: "",
     },
     transporter: { type: String, trim: true },
