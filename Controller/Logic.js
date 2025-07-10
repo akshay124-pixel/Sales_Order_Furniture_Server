@@ -8,7 +8,7 @@ let io;
 const initSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: "https://sales-order-furniture.vercel.app",
       methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
     },
   });
