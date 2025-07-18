@@ -89,7 +89,7 @@ const orderSchema = new mongoose.Schema(
     },
     gemOrderNumber: { type: String, trim: true, default: "" },
     deliveryDate: { type: Date },
-    installation: { type: String, default: "N/A", trim: true },
+    installation: { type: String, default: "0", trim: true },
     installationStatus: { type: String, default: "Pending" },
     remarksByInstallation: { type: String, default: "", trim: true },
     dispatchStatus: {
