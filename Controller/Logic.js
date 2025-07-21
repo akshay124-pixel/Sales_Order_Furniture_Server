@@ -124,7 +124,7 @@ const createOrder = async (req, res) => {
       deliveryDate,
       demoDate,
       paymentTerms,
-      creditDays,
+
       dispatchFrom,
       fulfillingStatus,
     } = req.body;
@@ -188,15 +188,6 @@ const createOrder = async (req, res) => {
       return res.status(400).json({
         success: false,
         error: "Payment Terms is required for non-Demo orders",
-      });
-    }
-    if (
-      (paymentTerms === "Credit" || paymentTerms === "Partial Advance") &&
-      !creditDays
-    ) {
-      return res.status(400).json({
-        success: false,
-        error: "Credit days required for Credit or Partial Advance terms",
       });
     }
 
@@ -317,7 +308,7 @@ const createOrder = async (req, res) => {
       deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
       paymentTerms: paymentTerms || "",
       demoDate: demoDate ? new Date(demoDate) : null,
-      creditDays: creditDays || "",
+
       createdBy: req.user.id,
       dispatchFrom,
       fulfillingStatus:
@@ -449,7 +440,7 @@ const editEntry = async (req, res) => {
       "salesPerson",
       "report",
       "company",
-      "transporter",
+      "installationReport",
       "transporterDetails",
       "docketNo",
       "receiptDate",
@@ -473,11 +464,11 @@ const editEntry = async (req, res) => {
       "sostatus",
       "gemOrderNumber",
       "deliveryDate",
+      "stamp",
       "demoDate",
       "paymentTerms",
-      "creditDays",
       "actualFreight",
-      "stockStatus",
+
       "remarksBydispatch",
     ];
 
@@ -497,7 +488,7 @@ const editEntry = async (req, res) => {
       }
     }
 
-    // Automatically set completionStatus to "Complete" if fulfillingStatus is "Fulfilled"
+    // Automatically set completionStatus to
     if (updateData.fulfillingStatus === "Fulfilled") {
       updateFields.completionStatus = "Complete";
       if (!updateFields.fulfillmentDate) {
@@ -553,7 +544,7 @@ ${
           : "N/A"
       }`
 }
-Transporter: ${updatedOrder.transporter || "N/A"}
+
 Transporter Details: ${updatedOrder.transporterDetails || "N/A"}
 Docket No: ${updatedOrder.docketNo || "N/A"}
 
@@ -674,7 +665,6 @@ const parseDate = (dateStr) => {
   return isNaN(date.getTime()) ? null : date;
 };
 
-// Bulk upload orders
 // Bulk upload orders
 const bulkUploadOrders = async (req, res) => {
   try {
@@ -828,7 +818,7 @@ const bulkUploadOrders = async (req, res) => {
           ? new Date(row["Delivery Date"])
           : null,
         paymentTerms: row["Payment Terms"] || "",
-        creditDays: row["Credit Days"] || "",
+
         createdBy: req.user.id,
       };
 
@@ -979,7 +969,7 @@ const exportentry = async (req, res) => {
                 salesPerson: entry.salesPerson || "",
                 report: entry.report || "",
                 company: entry.company || "Promark",
-                transporter: entry.transporter || "",
+
                 transporterDetails: entry.transporterDetails || "",
                 docketNo: entry.docketNo || "",
                 shippingAddress: entry.shippingAddress || "",
@@ -1017,7 +1007,7 @@ const exportentry = async (req, res) => {
                 salesPerson: "",
                 report: "",
                 company: "",
-                transporter: "",
+
                 transporterDetails: "",
                 docketNo: "",
                 shippingAddress: "",
@@ -1089,7 +1079,7 @@ const getFinishedGoodsOrders = async (req, res) => {
   try {
     const orders = await Order.find({
       fulfillingStatus: "Fulfilled",
-      dispatchStatus: { $ne: "Delivered" },
+      stamp: { $ne: "Received" },
     }).populate("createdBy", "username email");
     res.status(200).json({ success: true, data: orders });
   } catch (error) {
@@ -1140,12 +1130,15 @@ const getBillOrders = async (req, res) => {
 const getInstallationOrders = async (req, res) => {
   try {
     const orders = await Order.find({
-      dispatchStatus: "Delivered",
+      // dispatchStatus: "Delivered",
+      stamp: "Received",
+      installationReport: { $ne: "Yes" }, // Exclude orders where installationReport is "Yes"
       installationStatus: {
         $in: [
           "Pending",
           "In Progress",
           "Failed",
+          "Completed",
           "Hold by Salesperson",
           "Hold by Customer",
           "Site Not Ready",
@@ -1167,8 +1160,8 @@ const getInstallationOrders = async (req, res) => {
 const getAccountsOrders = async (req, res) => {
   try {
     const orders = await Order.find({
-      installationStatus: "Completed",
-      paymentReceived: { $ne: "Received" }, // Not equal to "Received"
+      installationReport: "Yes",
+      paymentReceived: { $ne: "Received" },
     }).populate("createdBy", "username email");
 
     res.json({ success: true, data: orders });
@@ -1187,11 +1180,11 @@ const getProductionApprovalOrders = async (req, res) => {
   try {
     const orders = await Order.find({
       $or: [
-        { sostatus: "Accounts Approved" }, // Include all orders with sostatus "Accounts Approved"
+        { sostatus: "Accounts Approved" },
         {
           $and: [
-            { sostatus: "Pending for Approval" }, // Include orders with sostatus "Pending for Approval"
-            { paymentTerms: "Credit" }, // Only if paymentTerms is "Credit"
+            { sostatus: "Pending for Approval" },
+            { paymentTerms: "Credit" },
           ],
         },
       ],

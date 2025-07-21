@@ -11,8 +11,7 @@ const productSchema = new mongoose.Schema({
   spec: { type: String, default: "N/A", trim: true },
   qty: { type: Number, min: 1, required: true },
   unitPrice: { type: Number, min: 0, required: true },
-
-  modelNos: [{ type: String, trim: true }], // Optional
+  modelNos: [{ type: String, trim: true }],
   gst: {
     type: String,
     enum: ["18", "28", "including"],
@@ -69,7 +68,7 @@ const orderSchema = new mongoose.Schema(
       enum: ["100% Advance", "Partial Advance", "Credit", ""],
       default: "",
     },
-    creditDays: { type: String, trim: true, default: "" },
+
     freightcs: { type: String, trim: true, default: "" },
     freightstatus: {
       type: String,
@@ -91,16 +90,26 @@ const orderSchema = new mongoose.Schema(
     deliveryDate: { type: Date },
     installation: { type: String, default: "N/A", trim: true },
     installationStatus: { type: String, default: "Pending" },
+    installationReport: {
+      type: String,
+      enum: ["Yes", "No"],
+      default: "No",
+    },
+    stamp: {
+      type: String,
+      enum: ["Received", "Not Received"],
+      default: "Not Received",
+    },
     remarksByInstallation: { type: String, default: "", trim: true },
     dispatchStatus: {
       type: String,
       enum: [
-        "Not Dispatched",
+        "Not Dispatched", //Pending
         "Docket Awaited Dispatched",
         "Hold by Salesperson",
         "Hold by Customer",
         "Order Cancelled",
-        "Dispatched",
+        "Dispatched", //Intransit
         "Delivered",
       ],
       default: "Not Dispatched",
@@ -109,17 +118,10 @@ const orderSchema = new mongoose.Schema(
     report: { type: String, trim: true, default: "" },
     company: {
       type: String,
-      enum: [
-        "Promark",
-        "Foxmate",
-        "Promine",
-        "Primus",
-        "Lead Systems Incorporatio",
-        "",
-      ],
+      enum: ["Promark", "Foxmate", "Promine", "Primus", ""],
       default: "",
     },
-    transporter: { type: String, trim: true },
+
     transporterDetails: { type: String, trim: true },
     docketNo: { type: String, trim: true },
     receiptDate: { type: Date },
@@ -150,11 +152,7 @@ const orderSchema = new mongoose.Schema(
       enum: ["In Progress", "Complete"],
       default: "In Progress",
     },
-    stockStatus: {
-      type: String,
-      enum: ["In Stock", "Not in Stock", "Partial Stock"],
-      default: "In Stock",
-    },
+
     demoDate: { type: Date },
     fulfillmentDate: { type: Date },
     remarks: { type: String, trim: true, default: "" },
