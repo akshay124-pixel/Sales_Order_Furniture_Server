@@ -215,8 +215,7 @@ const createOrder = async (req, res) => {
         !product.productType ||
         !product.qty ||
         !product.unitPrice ||
-        !product.gst ||
-        !product.warranty
+        !product.gst
       ) {
         return res.status(400).json({
           success: false,
@@ -243,15 +242,10 @@ const createOrder = async (req, res) => {
       // Set defaults
       product.size = product.size || "N/A";
       product.spec = product.spec || "N/A";
-      product.warranty =
-        product.warranty || (orderType === "B2G" ? "As Per Tender" : "1 Year");
-      product.serialNos = Array.isArray(product.serialNos)
-        ? product.serialNos
-        : [];
+
       product.modelNos = Array.isArray(product.modelNos)
         ? product.modelNos
         : [];
-      product.brand = product.brand || "";
     }
 
     // Calculate total
@@ -938,14 +932,11 @@ const exportentry = async (req, res) => {
           spec: product.spec || "N/A",
           qty: product.qty || 0,
           unitPrice: product.unitPrice || 0,
-          serialNos: Array.isArray(product.serialNos)
-            ? product.serialNos.join(", ")
-            : "",
+
           modelNos: Array.isArray(product.modelNos)
             ? product.modelNos.join(", ")
             : "",
           gst: product.gst || 0,
-          brand: product.brand || "",
         };
 
         const conditionalData =

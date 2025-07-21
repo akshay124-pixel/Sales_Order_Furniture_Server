@@ -18,8 +18,6 @@ const productSchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
-  brand: { type: String, trim: true, default: "" }, // Optional
-  warranty: { type: String, trim: true, required: true },
 });
 
 const orderSchema = new mongoose.Schema(
