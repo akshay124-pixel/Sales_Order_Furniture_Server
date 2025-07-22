@@ -103,7 +103,7 @@ const orderSchema = new mongoose.Schema(
       type: String,
       enum: [
         "Not Dispatched", //Pending
-        "Docket Awaited Dispatched",
+
         "Hold by Salesperson",
         "Hold by Customer",
         "Order Cancelled",

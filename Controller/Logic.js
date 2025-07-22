@@ -8,7 +8,7 @@ let io;
 const initSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: "https://sales-order-furniture.vercel.app",
+      origin: "http://localhost:3000",
       methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
     },
   });
@@ -1121,9 +1121,9 @@ const getBillOrders = async (req, res) => {
 const getInstallationOrders = async (req, res) => {
   try {
     const orders = await Order.find({
-      // dispatchStatus: "Delivered",
-      stamp: "Received",
-      installationReport: { $ne: "Yes" }, // Exclude orders where installationReport is "Yes"
+      dispatchStatus: "Delivered",
+      // stamp: "Received",
+      installationReport: { $ne: "Yes" }, //
       installationStatus: {
         $in: [
           "Pending",
@@ -1151,7 +1151,7 @@ const getInstallationOrders = async (req, res) => {
 const getAccountsOrders = async (req, res) => {
   try {
     const orders = await Order.find({
-      installationReport: "Yes",
+      installationStatus: "Completed",
       paymentReceived: { $ne: "Received" },
     }).populate("createdBy", "username email");
 
