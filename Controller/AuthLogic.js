@@ -108,5 +108,87 @@ const Login = async (req, res) => {
     });
   }
 };
+const ChangePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.id; // From JWT middleware
 
-module.exports = { Signup, Login };
+    console.log("ChangePassword: Request received", { userId });
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Current and new password are required",
+      });
+    }
+
+    // Check if new password is same as current
+    if (currentPassword === newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New password must be different from current password",
+      });
+    }
+
+    // Password complexity validation
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "New password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      console.log("ChangePassword: User not found", { userId });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      console.log("ChangePassword: Current password incorrect for user", {
+        userId,
+      });
+      return res
+        .status(401)
+        .json({ success: false, message: "Current password is incorrect" });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedNewPassword;
+    user.lastPasswordChange = new Date();
+    await user.save();
+
+    console.log("ChangePassword: Password changed successfully for user", {
+      userId,
+    });
+
+    // Emit Socket.IO event for audit logging
+    const io = req.app.get("io");
+    if (io) {
+      io.to(userId.toString()).emit("passwordChange", {
+        userId,
+        email: user.email,
+        timestamp: new Date(),
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    console.error("Change Password Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while changing password",
+    });
+  }
+};
+
+module.exports = { Signup, Login, ChangePassword };
