@@ -2,13 +2,14 @@ const mongoose = require("mongoose");
 const XLSX = require("xlsx");
 const { Server } = require("socket.io");
 const { Order, Notification } = require("../Models/Schema");
+require("dotenv").config();
 const { sendMail } = require("../utils/mailer");
 let io;
 
 const initSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: process.env.APP_URL || "http://localhost:3000",
       methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
     },
   });
