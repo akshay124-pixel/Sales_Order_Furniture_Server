@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
-
-const URI =
-  "mongodb+srv://promarkdatabase:promarkdatabase%401234@promarkdb.zfwjisc.mongodb.net/So_Mangement_Furniture";
+require("dotenv").config();
+const URI = process.env.DB_URL;
 const dbconnect = async () => {
   try {
     await mongoose.connect(URI, {
