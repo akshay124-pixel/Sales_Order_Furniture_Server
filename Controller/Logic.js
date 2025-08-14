@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const XLSX = require("xlsx");
 const { Server } = require("socket.io");
 const { Order, Notification } = require("../Models/Schema");
-require("dotenv").config();
+
 const { sendMail } = require("../utils/mailer");
 let io;
 
