@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema({
       "Finish",
       "Accounts",
       "Admin",
+      "SuperAdmin",
       "Verification",
       "Bill",
       "ProductionApproval",

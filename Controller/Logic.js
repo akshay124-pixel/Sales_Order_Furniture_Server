@@ -71,7 +71,7 @@ const getAllOrders = async (req, res) => {
     const { role, id } = req.user;
     let orders;
 
-    if (role === "Admin") {
+    if (role === "Admin" || role === "SuperAdmin") {
       orders = await Order.find().populate("createdBy", "username email");
     } else if (role === "Sales") {
       orders = await Order.find({ createdBy: id }).populate(
@@ -861,7 +861,7 @@ const exportentry = async (req, res) => {
     const { role, id } = req.user;
     let orders;
 
-    if (role === "Admin") {
+    if (role === "Admin" || role === "SuperAdmin") {
       orders = await Order.find().lean();
     } else if (role === "Sales") {
       orders = await Order.find({ createdBy: id }).lean();

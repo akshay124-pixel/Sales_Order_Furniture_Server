@@ -10,6 +10,7 @@ const VALID_ROLES = [
   "Finish",
   "Accounts",
   "Admin",
+  "SuperAdmin",
   "Verification",
   "Bill",
   "ProductionApproval",
